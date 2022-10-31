@@ -1,4 +1,4 @@
-package com.progressoft.chequesservice;
+package com.progressoft;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

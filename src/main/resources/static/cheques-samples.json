@@ -1,0 +1,37 @@
+[
+  {
+    "chequeAmount" : "1000.00",
+    "chequeNumber" : "0000234567",
+    "chequeDigit" : "005",
+    "payeeAccount": { "accountId" : 1 },
+    "drawerAccount" : { "accountId" : 2}
+  },
+  {
+    "chequeAmount" : "2000.00",
+    "chequeNumber" : "00003148",
+    "chequeDigit" : "004",
+    "payeeAccount": { "accountId" : 3 },
+    "drawerAccount" : { "accountId" : 2}
+  },
+  {
+    "chequeAmount" : "3400.00",
+    "chequeNumber" : "00098748",
+    "chequeDigit" : "047",
+    "payeeAccount": { "accountId" : 2 },
+    "drawerAccount" : { "accountId" : 4}
+  },
+  {
+    "chequeAmount" : "908000.00",
+    "chequeNumber" : "00045988",
+    "chequeDigit" : "008",
+    "payeeAccount": { "accountId" : 5 },
+    "drawerAccount" : { "accountId" : 3}
+  },
+  {
+    "chequeAmount" : "87000.00",
+    "chequeNumber" : "00095612",
+    "chequeDigit" : "007",
+    "payeeAccount": { "accountId" : 4 },
+    "drawerAccount" : { "accountId" : 1}
+  }
+]
