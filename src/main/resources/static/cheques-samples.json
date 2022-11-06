@@ -1,0 +1,62 @@
+[
+  {
+    "chequeAmount" : "1000.00",
+    "chequeNumber" : "0000234567",
+    "chequeDigit" : "005",
+    "payeeAccount": {
+      "bankCode" : "07",
+      "branchCode" : "002",
+      "accountNumber" : "000003401876"
+    },
+    "drawerAccount" : {
+      "bankCode" : "02",
+      "branchCode" : "003",
+      "accountNumber" : "0000000010220474"
+    }
+  },
+  {
+    "chequeAmount" : "2000.00",
+    "chequeNumber" : "00003148",
+    "chequeDigit" : "004",
+    "payeeAccount": {
+      "bankCode" : "09",
+      "branchCode" : "016",
+      "accountNumber" : "000089751362"
+    },
+    "drawerAccount" : {
+      "bankCode" : "05",
+      "branchCode" : "006",
+      "accountNumber" : "00000020005316"
+    }
+  },
+  {
+    "chequeAmount" : "908000.00",
+    "chequeNumber" : "00045988",
+    "chequeDigit" : "008",
+    "payeeAccount": {
+      "bankCode" : "01",
+      "branchCode" : "003",
+      "accountNumber" : "00000135625"
+    },
+    "drawerAccount" : {
+      "bankCode" : "05",
+      "branchCode" : "006",
+      "accountNumber" : "00000020005316"
+    }
+  },
+  {
+    "chequeAmount" : "87000.00",
+    "chequeNumber" : "00095612",
+    "chequeDigit" : "007",
+    "payeeAccount": {
+      "bankCode" : "07",
+      "branchCode" : "0068",
+      "accountNumber" : "0000453189641"
+    },
+    "drawerAccount" : {
+      "bankCode" : "77",
+      "branchCode" : "008",
+      "accountNumber" : "00264965319"
+    }
+  }
+]
