@@ -2,13 +2,15 @@ package com.progressoft.api;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.progressoft.model.Cheque;
+import com.progressoft.model.ChequeDto;
 import com.progressoft.service.ChequeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.persistence.EntityNotFoundException;
+import javax.validation.Valid;
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.List;
@@ -17,13 +19,18 @@ import java.util.List;
 @RequestMapping("/cheques")
 public class ChequeController {
 
-    @Autowired
     private ChequeService chequeService;
 
+    @Autowired
+    public ChequeController (
+            ChequeService chequeService
+    ) {
+        this.chequeService = chequeService;
+    }
 
     @PostMapping(path = "/generate-samples")
-    public Iterable<Cheque> addCheques() {
-        List<Cheque> samples;
+    public Iterable<ChequeDto> addCheques() {
+        List<ChequeDto> samples;
         try {
             samples = new ObjectMapper().readValue(Paths.get("src/main/resources/static/cheques-samples.json").toFile(),
                     new TypeReference<>() {});
@@ -31,52 +38,70 @@ public class ChequeController {
             throw new RuntimeException(e);
         }
         chequeService.saveAll(samples);
-        return chequeService.findAll();
+        return chequeService.getAllCheques();
     }
 
-
-
-    // Create or add a cheque
-    @PostMapping(path = "", consumes = {"application/json"})
-    public ResponseEntity<Cheque> addCheque(@RequestBody Cheque cheque) {
-        return new ResponseEntity<>(chequeService.saveOrUpdate(cheque), HttpStatus.CREATED);
+    @PostMapping()
+    public ResponseEntity<Void> create(
+            @Valid @RequestBody ChequeDto chequeDto
+    ) {
+        chequeService.createCheque(chequeDto);
+        return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
-    // List all the cheques
-    @GetMapping("")
-    public Iterable<Cheque> getCheques() {
-        return chequeService.findAll();
+    @GetMapping()
+    public ResponseEntity<List<ChequeDto>> getAllCheques() {
+        return new ResponseEntity<>(
+                chequeService.getAllCheques(),
+                HttpStatus.OK
+        );
     }
 
-    // Delete a cheque with given ID.
-    @DeleteMapping("/{accountId}")
-    public ResponseEntity<?> deleteCheque(@PathVariable long accountId) {
-        if (chequeService.chequeExistsById(accountId)) {
-            chequeService.deleteChequeByID(accountId);
-            return new ResponseEntity<String>(
-                    "Cheque with id " + accountId + " successfully deleted.", HttpStatus.NO_CONTENT);
+    @GetMapping("/{id}")
+    public ResponseEntity<ChequeDto> getById(
+            @PathVariable(value = "id") Long id
+    ) {
+        try {
+            return new ResponseEntity<>(
+                    chequeService.getChequeById(id),
+                    HttpStatus.OK
+            );
+        } catch (EntityNotFoundException e) {
+            return new ResponseEntity<>(
+                    new ChequeDto(),
+                    HttpStatus.NOT_FOUND);
         }
-        return new ResponseEntity<String>(
-                "Unable to delete cheque with id " + accountId + ".", HttpStatus.NOT_FOUND);
 
     }
 
-    // Update a cheque with given ID.
-    @PutMapping("/{chequeId}")
-    public ResponseEntity<Cheque> saveOrUpdateCheque(@PathVariable long chequeId, @RequestBody Cheque givenCheque) {
-        Cheque currentCheque = chequeService.findChequeById(chequeId);
-        currentCheque.setChequeAmount(givenCheque.getChequeAmount());
-        currentCheque.setChequeNumber(givenCheque.getChequeNumber());
-        currentCheque.setChequeDigit(givenCheque.getChequeDigit());
-        return new ResponseEntity<Cheque>(chequeService.saveOrUpdate(currentCheque), HttpStatus.OK);
-    }
-
-    // Get an account with given ID.
-    @GetMapping("/{chequeId}")
-    public ResponseEntity<Cheque> getAccountById(@PathVariable("chequeId") long chequeId) {
-        if (!chequeService.chequeExistsById(chequeId)) {
-            return new ResponseEntity<Cheque>(new Cheque(), HttpStatus.NOT_FOUND);
+    @PutMapping("/{id}")
+    public ResponseEntity<ChequeDto> updateById(
+            @PathVariable(value = "id") Long id,
+            @Valid @RequestBody ChequeDto givenChequeDto
+    ) {
+        try {
+            chequeService.updateChequeById(id, givenChequeDto);
+            return getById(id);
+        } catch (EntityNotFoundException e) {
+            return new ResponseEntity<>(
+                    new ChequeDto(),
+                    HttpStatus.NOT_FOUND);
         }
-        return new ResponseEntity<Cheque>(chequeService.findChequeById(chequeId), HttpStatus.FOUND);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> deleteById(
+            @PathVariable(value = "id") Long id
+    ) {
+        try {
+            return new ResponseEntity<>(
+                    chequeService.deleteChequeByID(id),
+                    HttpStatus.NO_CONTENT
+            );
+        } catch (EntityNotFoundException e) {
+            return new ResponseEntity<>(
+                    "No cheque with id " + id + " found.",
+                    HttpStatus.NOT_FOUND);
+        }
     }
 }
