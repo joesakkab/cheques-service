@@ -1,0 +1,27 @@
+[
+  {
+    "bankCode" : "07",
+    "branchCode" : "002",
+    "accountNumber" : "000003401876"
+  },
+  {
+    "bankCode" : "02",
+    "branchCode" : "003",
+    "accountNumber" : "0000000010220474"
+  },
+  {
+    "bankCode" : "09",
+    "branchCode" : "016",
+    "accountNumber" : "000089751362"
+  },
+  {
+    "bankCode" : "01",
+    "branchCode" : "003",
+    "accountNumber" : "00000135625"
+  },
+  {
+    "bankCode" : "05",
+    "branchCode" : "006",
+    "accountNumber" : "00000020005316"
+  }
+]
