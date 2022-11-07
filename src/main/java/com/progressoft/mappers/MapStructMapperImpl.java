@@ -8,8 +8,8 @@ import org.mapstruct.MappingTarget;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.processing.Generated;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 @Generated(
         value = "org.mapstruct.ap.MappingProcessor",
@@ -52,6 +52,18 @@ public class MapStructMapperImpl implements MapStructMapper {
     }
 
     @Override
+    public List<ChequeDto> listOfChequesToListOfChequesDtos(List<Cheque> cheques) {
+        if (cheques == null) {
+            return null;
+        }
+        List<ChequeDto> dtos = new ArrayList<>();
+        for (Cheque cheque: cheques) {
+            dtos.add(chequeToChequeDto(cheque));
+        }
+        return dtos;
+    }
+
+    @Override
     public Account accountDtoToAccount(AccountDto accountDto) {
         if (accountDto == null) {
             return null;
@@ -85,15 +97,4 @@ public class MapStructMapperImpl implements MapStructMapper {
         entity.setDrawerAccount(accountDtoToAccount(dto.getDrawerAccount()));
     }
 
-    private Set<ChequeDto> chequeSetTochequeDtoSet(Set<Cheque> set) {
-        if (set == null) {
-            return null;
-        }
-
-        Set<ChequeDto> set1 = new HashSet<ChequeDto>();
-        for (Cheque cheque: set) {
-            set1.add(chequeToChequeDto(cheque));
-        }
-        return set1;
-    }
 }

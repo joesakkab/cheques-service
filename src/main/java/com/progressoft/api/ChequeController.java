@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.persistence.EntityNotFoundException;
 import javax.validation.Valid;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.nio.file.Paths;
 import java.util.List;
 
@@ -19,7 +20,7 @@ import java.util.List;
 @RequestMapping("/cheques")
 public class ChequeController {
 
-    private ChequeService chequeService;
+    private final ChequeService chequeService;
 
     @Autowired
     public ChequeController (
@@ -49,13 +50,6 @@ public class ChequeController {
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
-    @GetMapping()
-    public ResponseEntity<List<ChequeDto>> getAllCheques() {
-        return new ResponseEntity<>(
-                chequeService.getAllCheques(),
-                HttpStatus.OK
-        );
-    }
 
     @GetMapping("/{id}")
     public ResponseEntity<ChequeDto> getById(
@@ -71,6 +65,20 @@ public class ChequeController {
                     new ChequeDto(),
                     HttpStatus.NOT_FOUND);
         }
+
+    }
+
+    @GetMapping()
+    public ResponseEntity<List<ChequeDto>> getByIdAndAmountAndNumberAndDigit(
+            @RequestParam(required = false) Long id,
+            @RequestParam(required = false) BigDecimal amount,
+            @RequestParam(required = false) String number,
+            @RequestParam(required = false) String digit
+    ) {
+        return new ResponseEntity<>(
+                chequeService.findChequesByAllFields(id, amount, number, digit),
+                HttpStatus.OK
+        );
 
     }
 

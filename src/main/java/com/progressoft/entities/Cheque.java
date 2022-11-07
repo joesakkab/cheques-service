@@ -1,9 +1,15 @@
 package com.progressoft.entities;
 
 
+import lombok.*;
+
 import javax.persistence.*;
 import java.math.BigDecimal;
 
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity(name = "Cheque")
 @Table(
         name = "cheque",
@@ -47,51 +53,4 @@ public class Cheque {
     @Embedded
     private Account drawerAccount;
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public BigDecimal getAmount() {
-        return amount;
-    }
-
-    public void setAmount(BigDecimal amount) {
-        this.amount = amount;
-    }
-
-    public String getNumber() {
-        return number;
-    }
-
-    public void setNumber(String number) {
-        this.number = number;
-    }
-
-    public String getDigit() {
-        return digit;
-    }
-
-    public void setDigit(String digit) {
-        this.digit = digit;
-    }
-
-    public Account getPayeeAccount() {
-        return payeeAccount;
-    }
-
-    public void setPayeeAccount(Account payee) {
-        this.payeeAccount = payee;
-    }
-
-    public Account getDrawerAccount() {
-        return drawerAccount;
-    }
-
-    public void setDrawerAccount(Account drawer) {
-        this.drawerAccount = drawer;
-    }
 }

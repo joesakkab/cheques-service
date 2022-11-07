@@ -1,9 +1,12 @@
 package com.progressoft.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.*;
 
 import javax.validation.constraints.NotNull;
 
+@Getter
+@Setter
 public class AccountDto {
 
     @NotNull
@@ -17,28 +20,4 @@ public class AccountDto {
     @NotNull
     @JsonProperty("accountNumber")
     private String accountNumber;
-
-    public String getBankCode() {
-        return bankCode;
-    }
-
-    public void setBankCode(String bankCode) {
-        this.bankCode = bankCode;
-    }
-
-    public String getBranchCode() {
-        return branchCode;
-    }
-
-    public void setBranchCode(String branchCode) {
-        this.branchCode = branchCode;
-    }
-
-    public String getAccountNumber() {
-        return accountNumber;
-    }
-
-    public void setAccountNumber(String accountNumber) {
-        this.accountNumber = accountNumber;
-    }
 }

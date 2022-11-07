@@ -9,10 +9,13 @@ import org.mapstruct.Mapper;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.NullValuePropertyMappingStrategy;
 
+import java.util.List;
+
 @Mapper(componentModel = "spring")
 public interface MapStructMapper {
     ChequeDto chequeToChequeDto(Cheque cheque);
     Cheque chequeDtoToCheque(ChequeDto chequeDto);
+    List<ChequeDto> listOfChequesToListOfChequesDtos(List<Cheque> cheques);
     Account accountDtoToAccount(AccountDto accountDto);
     AccountDto accountToAccountDto(Account account);
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)

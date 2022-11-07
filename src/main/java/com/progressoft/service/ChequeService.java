@@ -7,6 +7,7 @@ import com.progressoft.repositories.ChequeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -70,5 +71,11 @@ public class ChequeService {
                     mapStructMapper.chequeDtoToCheque(dto)
             );
         }
+    }
+
+    public List<ChequeDto> findChequesByAllFields(Long id, BigDecimal amount, String number, String digit) {
+        return mapStructMapper.listOfChequesToListOfChequesDtos(
+                chequeRepo.findChequesByAllFields(id, amount, number, digit)
+        );
     }
 }
