@@ -5,6 +5,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.progressoft.model.ChequeDto;
 import com.progressoft.service.ChequeService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,7 +18,9 @@ import javax.validation.Valid;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.nio.file.Paths;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/cheques")
@@ -69,14 +75,34 @@ public class ChequeController {
     }
 
     @GetMapping()
-    public ResponseEntity<List<ChequeDto>> getByIdAndAmountAndNumberAndDigit(
+    public ResponseEntity<Map<String , Object>> getByIdAndAmountAndNumberAndDigit(
             @RequestParam(required = false) Long id,
             @RequestParam(required = false) BigDecimal amount,
             @RequestParam(required = false) String number,
-            @RequestParam(required = false) String digit
+            @RequestParam(required = false) String digit,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "3") int size
     ) {
+        List<ChequeDto> cheques = chequeService.findChequesByAllFields(id, amount, number, digit);
+        Pageable paging = PageRequest.of(page, size);
+
+        final int start = (int) paging.getOffset();
+        final int end = Math.min((start + paging.getPageSize()), cheques.size());
+
+        Page<ChequeDto> pageCheques = new PageImpl<ChequeDto>(
+                cheques.subList(start, end),
+                paging,
+                cheques.size()
+        );
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("cheques", cheques);
+        response.put("currentPage", pageCheques.getNumber());
+        response.put("totalItems", pageCheques.getTotalElements());
+        response.put("totalPages", pageCheques.getTotalPages());
+
         return new ResponseEntity<>(
-                chequeService.findChequesByAllFields(id, amount, number, digit),
+                response,
                 HttpStatus.OK
         );
 
