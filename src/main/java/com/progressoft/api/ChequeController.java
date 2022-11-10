@@ -64,11 +64,10 @@ public class ChequeController {
     @GetMapping()
     public ResponseEntity<?> getAll(
             @ModelAttribute("chequeDto") ChequeDto chequeDto,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "3") int size
+            Pageable pageable
     ) {
         return new ResponseEntity<>(
-                chequeService.findAllCheques(chequeDto, PageRequest.of(page, size)),
+                chequeService.findAllCheques(chequeDto, pageable),
                 HttpStatus.OK
             );
 
