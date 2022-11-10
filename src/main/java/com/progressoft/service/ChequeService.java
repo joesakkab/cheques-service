@@ -4,10 +4,10 @@ import com.progressoft.entities.Cheque;
 import com.progressoft.mappers.MapStructMapper;
 import com.progressoft.model.ChequeDto;
 import com.progressoft.repositories.ChequeRepository;
+import org.springframework.data.domain.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -49,9 +49,9 @@ public class ChequeService {
 
     public void updateChequeById(Long id, ChequeDto chequeDto) {
         if (chequeRepo.existsById(id)) {
-            Cheque cheque = chequeRepo.getReferenceById(id);
-            mapStructMapper.updateChequeFromChequeDto(chequeDto, cheque);
-            chequeRepo.save(cheque);
+            chequeDto.setId(id);
+            Cheque chequeResult = mapStructMapper.chequeDtoToCheque(chequeDto);
+            chequeRepo.save(chequeResult);
         }
     }
 
@@ -65,17 +65,13 @@ public class ChequeService {
 
     }
 
-    public void saveAll(List<ChequeDto> dtos) {
-        for (ChequeDto dto: dtos) {
-            chequeRepo.save(
-                    mapStructMapper.chequeDtoToCheque(dto)
-            );
-        }
-    }
-
-    public List<ChequeDto> findChequesByAllFields(Long id, BigDecimal amount, String number, String digit) {
-        return mapStructMapper.listOfChequesToListOfChequesDtos(
-                chequeRepo.findChequesByAllFields(id, amount, number, digit)
+    public Slice<ChequeDto> findAllCheques(ChequeDto chequeDto, Pageable pageable) {
+        Example<Cheque> chequeExample = Example.of(
+                mapStructMapper.chequeDtoToCheque(chequeDto)
         );
+        return chequeRepo.findAll(
+                chequeExample,
+                pageable
+            ).map(mapStructMapper::chequeToChequeDto);
     }
 }

@@ -2,6 +2,8 @@ package com.progressoft.entities;
 
 
 import lombok.*;
+import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
@@ -11,6 +13,8 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity(name = "Cheque")
+@DynamicInsert
+@DynamicUpdate
 @Table(
         name = "cheque",
         uniqueConstraints = {

@@ -5,10 +5,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.progressoft.model.ChequeDto;
 import com.progressoft.service.ChequeService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,11 +14,8 @@ import org.springframework.web.bind.annotation.*;
 import javax.persistence.EntityNotFoundException;
 import javax.validation.Valid;
 import java.io.IOException;
-import java.math.BigDecimal;
 import java.nio.file.Paths;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/cheques")
@@ -44,93 +39,72 @@ public class ChequeController {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        chequeService.saveAll(samples);
+        for (ChequeDto dto: samples) {
+            create(dto);
+        }
         return chequeService.getAllCheques();
     }
 
     @PostMapping()
-    public ResponseEntity<Void> create(
+    public ResponseEntity<?> create(
             @Valid @RequestBody ChequeDto chequeDto
     ) {
-        chequeService.createCheque(chequeDto);
-        return new ResponseEntity<>(HttpStatus.CREATED);
+        try {
+            chequeService.createCheque(chequeDto);
+            return new ResponseEntity<>(HttpStatus.CREATED);
+        } catch (DataIntegrityViolationException e) {
+            return new ResponseEntity<>(
+                    e.getCause() + "\nCheque number " + chequeDto.getNumber() + " must be unique",
+                    HttpStatus.FORBIDDEN
+            );
+        }
+
     }
 
+    @GetMapping()
+    public ResponseEntity<?> getAll(
+            @ModelAttribute("chequeDto") ChequeDto chequeDto,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "3") int size
+    ) {
+        return new ResponseEntity<>(
+                chequeService.findAllCheques(chequeDto, PageRequest.of(page, size)),
+                HttpStatus.OK
+            );
 
-    @GetMapping("/{id}")
-    public ResponseEntity<ChequeDto> getById(
-            @PathVariable(value = "id") Long id
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<?> updateById(
+            @PathVariable(value = "id") Long id,
+            @Valid @RequestBody ChequeDto givenChequeDto
     ) {
         try {
+            chequeService.updateChequeById(id, givenChequeDto);
             return new ResponseEntity<>(
                     chequeService.getChequeById(id),
                     HttpStatus.OK
             );
         } catch (EntityNotFoundException e) {
             return new ResponseEntity<>(
-                    new ChequeDto(),
+                    e.getCause() + "\nCheque with id " + id + " is not found.",
                     HttpStatus.NOT_FOUND);
-        }
-
-    }
-
-    @GetMapping()
-    public ResponseEntity<Map<String , Object>> getByIdAndAmountAndNumberAndDigit(
-            @RequestParam(required = false) Long id,
-            @RequestParam(required = false) BigDecimal amount,
-            @RequestParam(required = false) String number,
-            @RequestParam(required = false) String digit,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "3") int size
-    ) {
-        List<ChequeDto> cheques = chequeService.findChequesByAllFields(id, amount, number, digit);
-        Pageable paging = PageRequest.of(page, size);
-
-        final int start = (int) paging.getOffset();
-        final int end = Math.min((start + paging.getPageSize()), cheques.size());
-
-        Page<ChequeDto> pageCheques = new PageImpl<ChequeDto>(
-                cheques.subList(start, end),
-                paging,
-                cheques.size()
-        );
-
-        Map<String, Object> response = new HashMap<>();
-        response.put("cheques", cheques);
-        response.put("currentPage", pageCheques.getNumber());
-        response.put("totalItems", pageCheques.getTotalElements());
-        response.put("totalPages", pageCheques.getTotalPages());
-
-        return new ResponseEntity<>(
-                response,
-                HttpStatus.OK
-        );
-
-    }
-
-    @PutMapping("/{id}")
-    public ResponseEntity<ChequeDto> updateById(
-            @PathVariable(value = "id") Long id,
-            @Valid @RequestBody ChequeDto givenChequeDto
-    ) {
-        try {
-            chequeService.updateChequeById(id, givenChequeDto);
-            return getById(id);
-        } catch (EntityNotFoundException e) {
+        } catch (DataIntegrityViolationException e) {
             return new ResponseEntity<>(
-                    new ChequeDto(),
-                    HttpStatus.NOT_FOUND);
+                    e.getCause() + "\nCheque number " + givenChequeDto.getNumber() + " must be unique",
+                    HttpStatus.FORBIDDEN
+            );
         }
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteById(
+    public ResponseEntity<?> deleteById(
             @PathVariable(value = "id") Long id
     ) {
         try {
             return new ResponseEntity<>(
                     chequeService.deleteChequeByID(id),
-                    HttpStatus.NO_CONTENT
+                    HttpStatus.OK
             );
         } catch (EntityNotFoundException e) {
             return new ResponseEntity<>(
