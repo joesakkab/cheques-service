@@ -6,5 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface ChequeRepository extends JpaRepository<Cheque, Long> {
-
+    Boolean existsChequeByNumber(String number);
 }

@@ -1,25 +1,19 @@
 package com.progressoft.entities;
 
-
 import lombok.*;
-import org.hibernate.annotations.DynamicInsert;
-import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
 
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
-@AllArgsConstructor
+@AllArgsConstructor(staticName = "build")
 @Entity(name = "Cheque")
-@DynamicInsert
-@DynamicUpdate
 @Table(
-        name = "cheque",
-        uniqueConstraints = {
-                @UniqueConstraint(name = "cheque_number_unique", columnNames = "cheque_number")
-        }
+        name = "CHEQUE_TBL"
+//        uniqueConstraints = {
+//                @UniqueConstraint(name = "cheque_number_unique", columnNames = "cheque_number")
+//        }
 )
 public class Cheque {
 

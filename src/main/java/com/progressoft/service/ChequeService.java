@@ -1,8 +1,8 @@
 package com.progressoft.service;
 
 import com.progressoft.entities.Cheque;
-import com.progressoft.mappers.MapStructMapper;
-import com.progressoft.model.ChequeDto;
+import com.progressoft.dtos.ChequeDto;
+import com.progressoft.mappers.MapperImpl;
 import com.progressoft.repositories.ChequeRepository;
 import org.springframework.data.domain.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,20 +14,20 @@ import java.util.List;
 @Service
 public class ChequeService {
     public ChequeRepository chequeRepo;
-    public MapStructMapper mapStructMapper;
+    public MapperImpl mapper;
 
     @Autowired
     public ChequeService (
             ChequeRepository chequeRepo,
-            MapStructMapper mapStructMapper
+            MapperImpl mapper
     ) {
         this.chequeRepo = chequeRepo;
-        this.mapStructMapper = mapStructMapper;
+        this.mapper = mapper;
     }
 
     public void createCheque(ChequeDto chequeDto) {
         chequeRepo.save(
-                mapStructMapper.chequeDtoToCheque(chequeDto)
+                mapper.toChequeEntity(chequeDto)
         );
     }
 
@@ -35,14 +35,14 @@ public class ChequeService {
         List<ChequeDto> chequeDtos = new ArrayList<>();
         for (Cheque cheque : chequeRepo.findAll()) {
             chequeDtos.add(
-                    mapStructMapper.chequeToChequeDto(cheque)
+                    mapper.toChequeDto(cheque)
             );
         }
         return chequeDtos;
     }
 
     public ChequeDto getChequeById(Long id) {
-        return mapStructMapper.chequeToChequeDto(
+        return mapper.toChequeDto(
                 chequeRepo.getReferenceById(id)
         );
     }
@@ -50,7 +50,7 @@ public class ChequeService {
     public void updateChequeById(Long id, ChequeDto chequeDto) {
         if (chequeRepo.existsById(id)) {
             chequeDto.setId(id);
-            Cheque chequeResult = mapStructMapper.chequeDtoToCheque(chequeDto);
+            Cheque chequeResult = mapper.toChequeEntity(chequeDto);
             chequeRepo.save(chequeResult);
         }
     }
@@ -67,11 +67,11 @@ public class ChequeService {
 
     public Slice<ChequeDto> findAllCheques(ChequeDto chequeDto, Pageable pageable) {
         Example<Cheque> chequeExample = Example.of(
-                mapStructMapper.chequeDtoToCheque(chequeDto)
+                mapper.toChequeEntity(chequeDto)
         );
         return chequeRepo.findAll(
                 chequeExample,
                 pageable
-            ).map(mapStructMapper::chequeToChequeDto);
+            ).map(mapper::toChequeDto);
     }
 }

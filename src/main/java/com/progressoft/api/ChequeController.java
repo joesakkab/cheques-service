@@ -2,13 +2,15 @@ package com.progressoft.api;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.progressoft.model.ChequeDto;
+import com.progressoft.dtos.ChequeDto;
 import com.progressoft.service.ChequeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.persistence.EntityNotFoundException;
@@ -39,25 +41,28 @@ public class ChequeController {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        for (ChequeDto dto: samples) {
-            create(dto);
-        }
+//        for (ChequeDto dto: samples) {
+//            create(dto);
+//        }
         return chequeService.getAllCheques();
     }
 
     @PostMapping()
     public ResponseEntity<?> create(
-            @Valid @RequestBody ChequeDto chequeDto
+            @RequestBody @Valid ChequeDto chequeDto
     ) {
-        try {
+//        if (result.hasErrors()) {
+//            return new ResponseEntity<>("Error in creating cheque", HttpStatus.BAD_REQUEST);
+//        }
+//        try {
             chequeService.createCheque(chequeDto);
             return new ResponseEntity<>(HttpStatus.CREATED);
-        } catch (DataIntegrityViolationException e) {
-            return new ResponseEntity<>(
-                    e.getCause() + "\nCheque number " + chequeDto.getNumber() + " must be unique",
-                    HttpStatus.FORBIDDEN
-            );
-        }
+//        } catch (DataIntegrityViolationException e) {
+//            return new ResponseEntity<>(
+//                    e.getCause() + "\nCheque number " + chequeDto.getNumber() + " must be unique",
+//                    HttpStatus.FORBIDDEN
+//            );
+//        }
 
     }
 
@@ -76,7 +81,7 @@ public class ChequeController {
     @PutMapping("/{id}")
     public ResponseEntity<?> updateById(
             @PathVariable(value = "id") Long id,
-            @Valid @RequestBody ChequeDto givenChequeDto
+            @RequestBody @Valid ChequeDto givenChequeDto
     ) {
         try {
             chequeService.updateChequeById(id, givenChequeDto);
@@ -88,11 +93,11 @@ public class ChequeController {
             return new ResponseEntity<>(
                     e.getCause() + "\nCheque with id " + id + " is not found.",
                     HttpStatus.NOT_FOUND);
-        } catch (DataIntegrityViolationException e) {
-            return new ResponseEntity<>(
-                    e.getCause() + "\nCheque number " + givenChequeDto.getNumber() + " must be unique",
-                    HttpStatus.FORBIDDEN
-            );
+//        } catch (DataIntegrityViolationException e) {
+//            return new ResponseEntity<>(
+//                    e.getCause() + "\nCheque number " + givenChequeDto.getNumber() + " must be unique",
+//                    HttpStatus.FORBIDDEN
+//            );
         }
     }
 
