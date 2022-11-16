@@ -9,12 +9,7 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 @AllArgsConstructor(staticName = "build")
 @Entity(name = "Cheque")
-@Table(
-        name = "CHEQUE_TBL"
-//        uniqueConstraints = {
-//                @UniqueConstraint(name = "cheque_number_unique", columnNames = "cheque_number")
-//        }
-)
+@Table(name = "CHEQUE_TBL")
 public class Cheque {
 
     @Id

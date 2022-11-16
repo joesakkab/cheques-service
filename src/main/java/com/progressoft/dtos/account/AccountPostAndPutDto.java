@@ -1,4 +1,4 @@
-package com.progressoft.dtos;
+package com.progressoft.dtos.account;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
@@ -10,7 +10,7 @@ import javax.validation.constraints.Pattern;
 @Data
 @AllArgsConstructor(staticName = "build")
 @NoArgsConstructor
-public class AccountDto {
+public class AccountPostAndPutDto implements AccountDto {
 
     @NotBlank(message = "Account bank code must not be blank")
     @Length(min = 2, max = 2, message = "Bank code must be of length 2")

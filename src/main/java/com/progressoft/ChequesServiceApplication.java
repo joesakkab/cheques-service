@@ -20,15 +20,15 @@ public class ChequesServiceApplication {
 //	@Bean
 //	CommandLineRunner commandLineRunner(ChequeRepository chequeRepository, AccountRepository accountRepository) {
 //		return args -> {
-//			AccountDto account1 = new AccountDto(
+//			AccountPostAndPutDto account1 = new AccountPostAndPutDto(
 //					"07",
 //					"002",
 //					"000003401876");
-//			AccountDto account2 = new AccountDto(
+//			AccountPostAndPutDto account2 = new AccountPostAndPutDto(
 //					"02",
 //					"003",
 //					"0000000010220474");
-//			AccountDto account3 = new AccountDto(
+//			AccountPostAndPutDto account3 = new AccountPostAndPutDto(
 //					"09",
 //					"016",
 //					"0000087123964");
@@ -37,14 +37,14 @@ public class ChequesServiceApplication {
 //			accountRepository.save(account2);
 //			accountRepository.save(account3);
 //
-//			ChequeDto c1 = new ChequeDto(
+//			ChequePostDto c1 = new ChequePostDto(
 //					new BigDecimal("10000"),
 //					"0087829736",
 //					"001",
 //					account1,
 //					account2
 //			);
-//			ChequeDto c2 = new ChequeDto(
+//			ChequePostDto c2 = new ChequePostDto(
 //					new BigDecimal("64328.35"),
 //					"0005612",
 //					"009",

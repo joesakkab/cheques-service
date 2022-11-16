@@ -1,7 +1,7 @@
-package com.progressoft.dtos;
+package com.progressoft.dtos.cheques;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.progressoft.validations.UniqueChequeNumber;
+import com.progressoft.dtos.account.AccountPostAndPutDto;
 import lombok.*;
 
 import javax.validation.Valid;
@@ -11,7 +11,7 @@ import java.math.BigDecimal;
 @Data
 @AllArgsConstructor(staticName = "build")
 @NoArgsConstructor
-public class ChequeDto {
+public class ChequePutDto implements ChequeDto {
 
     @JsonProperty("id")
     private Long id;
@@ -25,7 +25,6 @@ public class ChequeDto {
 
     @NotBlank(message = " cheque number must not be blank")
     @Pattern(regexp = "^\\d+$", message = "ILLEGAL CHAR: Cheque number must be numeric")
-    @UniqueChequeNumber
     @JsonProperty("chequeNumber")
     private String number;
 
@@ -37,11 +36,11 @@ public class ChequeDto {
     @NotNull
     @JsonProperty("payeeAccount")
     @Valid
-    private AccountDto payeeAccount;
+    private AccountPostAndPutDto payeeAccount;
 
     @NotNull
     @JsonProperty("drawerAccount")
     @Valid
-    private AccountDto drawerAccount;
+    private AccountPostAndPutDto drawerAccount;
 
 }
