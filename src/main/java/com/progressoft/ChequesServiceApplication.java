@@ -18,41 +18,29 @@ public class ChequesServiceApplication {
 //		return args -> {};
 //	}
 //	@Bean
-//	CommandLineRunner commandLineRunner(ChequeRepository chequeRepository, AccountRepository accountRepository) {
+//	CommandLineRunner commandLineRunner() {
 //		return args -> {
-//			AccountPostAndPutDto account1 = new AccountPostAndPutDto(
-//					"07",
-//					"002",
-//					"000003401876");
-//			AccountPostAndPutDto account2 = new AccountPostAndPutDto(
-//					"02",
-//					"003",
-//					"0000000010220474");
-//			AccountPostAndPutDto account3 = new AccountPostAndPutDto(
-//					"09",
-//					"016",
-//					"0000087123964");
+//			ChequePostDto dto = new ChequePostDto();
+//			dto.setAmount(new BigDecimal(2000));
+//			dto.setNumber("00012345");
+//			dto.setDigit("004");
 //
-//			accountRepository.save(account1);
-//			accountRepository.save(account2);
-//			accountRepository.save(account3);
+//			dto.setDrawerAccount(new AccountDto());
+//			dto.getDrawerAccount().setAccountNumber("01234567");
+//			dto.getDrawerAccount().setBranchCode("1236");
+//			dto.getDrawerAccount().setBankCode("05");
 //
-//			ChequePostDto c1 = new ChequePostDto(
-//					new BigDecimal("10000"),
-//					"0087829736",
-//					"001",
-//					account1,
-//					account2
-//			);
-//			ChequePostDto c2 = new ChequePostDto(
-//					new BigDecimal("64328.35"),
-//					"0005612",
-//					"009",
-//					account3,
-//					account1
-//			);
-//			chequeRepository.save(c1);
-//			chequeRepository.save(c2);
+//			dto.setPayeeAccount(new AccountDto());
+//			dto.getPayeeAccount().setAccountNumber("52169856");
+//			dto.getPayeeAccount().setBranchCode("5631");
+//			dto.getPayeeAccount().setBankCode("05");
+////
+//			dto.setPostingDate(LocalDate.of(2022, 11, 30));
+//
+//			System.out.println(dto);
+//			ChequeMapper mapper = Mappers.getMapper(ChequeMapper.class);
+//			Cheque entity = mapper.map(dto);
+//			System.out.println("Entity is: \n" + entity.toString());
 //		};
 //	}
 

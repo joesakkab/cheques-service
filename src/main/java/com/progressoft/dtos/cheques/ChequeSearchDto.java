@@ -1,6 +1,7 @@
 package com.progressoft.dtos.cheques;
 
-import com.fasterxml.jackson.annotation.*;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.progressoft.dtos.account.AccountDto;
 import com.progressoft.entities.ChequeStatus;
 import com.progressoft.validations.UniqueChequeNumber;
@@ -16,56 +17,49 @@ import java.time.LocalDate;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class ChequePostDto {
+public class ChequeSearchDto {
 
     @JsonProperty(value = "id", access = JsonProperty.Access.READ_ONLY)
     private Long id;
 
-    @NotNull(message = "amount must not be empty")
     @Min(value = 0, message = "Cheque amount should be greater than zero.")
     @Max(value = 1000000, message = "Cheque amount should be less than 1,000,000.")
     @Digits(integer = 6, fraction = 2, message = "Cheque amount value out of bounds (<6 digits>.<2 digits> expected)")
-    @JsonAlias("chequeAmount")
+    @JsonProperty("amount")
     private BigDecimal amount;
 
-    @NotBlank(message = " cheque number must not be blank")
     @Pattern(regexp = "^\\d+$", message = "ILLEGAL CHAR: Cheque number must be numeric")
     @UniqueChequeNumber
-    @JsonAlias("chequeNumber")
+    @JsonProperty("number")
     private String number;
 
-    @NotBlank(message = "cheque digit must not be blank")
     @Pattern(regexp = "^\\d+$", message = "ILLEGAL CHAR: Cheque digit must be numeric")
-    @JsonAlias("chequeDigit")
+    @JsonProperty("digit")
     private String digit;
 
-    @NotNull
-    @JsonAlias("payee")
+    @JsonProperty("payeeAccount")
     @Valid
     private AccountDto payeeAccount;
 
-    @NotNull
-    @JsonAlias("drawer")
+    @JsonProperty("drawerAccount")
     @Valid
     private AccountDto drawerAccount;
 
     @Setter(AccessLevel.NONE)
-    @JsonProperty(value = "createdDate", access = JsonProperty.Access.READ_ONLY)
-    @JsonAlias("creationDate")
+    @JsonProperty("createdDate")
     private LocalDate createdDate;
 
     @JsonProperty("postingDate")
-    @JsonFormat(pattern = "yyyy/MM/dd")
-    private LocalDate postingDate = LocalDate.now();
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy/MM/dd")
+    private LocalDate postingDate;
 
-    @JsonProperty(value = "PDC", access = JsonProperty.Access.READ_ONLY)
+    @JsonProperty(value = "PDC")
     private Boolean pdc;
 
-    @JsonProperty(value = "ONUS", access = JsonProperty.Access.READ_ONLY)
+    @JsonProperty(value = "ONUS")
     private Boolean onus;
 
-    @JsonProperty(value = "status", access = JsonProperty.Access.READ_ONLY)
-    @JsonAlias("cheque_status")
+    @JsonProperty(value = "status")
     private ChequeStatus status;
 
 }

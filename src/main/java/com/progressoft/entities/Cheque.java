@@ -4,10 +4,12 @@ import lombok.*;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
+import java.time.LocalDate;
 
-@Data
+@ToString
+@Getter
+@Setter
 @NoArgsConstructor
-@AllArgsConstructor(staticName = "build")
 @Entity(name = "Cheque")
 @Table(name = "CHEQUE_TBL")
 public class Cheque {
@@ -46,4 +48,63 @@ public class Cheque {
     @Embedded
     private Account drawerAccount;
 
+    @Basic
+    @Column(name = "created_date", updatable = false)
+    private LocalDate createdDate = LocalDate.now();
+
+    @Basic
+    @Column(name = "posting_date")
+    private LocalDate postingDate;
+
+    @Basic
+    @Column(name = "PDC")
+    private Boolean pdc;
+
+    @Basic
+    @Column(name = "ONUS")
+    private Boolean onus;
+
+    @Basic
+    @Column(name = "Status")
+    private ChequeStatus status = ChequeStatus.DRAFT;
+
+    public Cheque(BigDecimal amount,
+                  String number,
+                  String digit,
+                  Account payeeAccount,
+                  Account drawerAccount,
+                  LocalDate createdDate,
+                  LocalDate postingDate,
+                  Boolean onus,
+                  Boolean pdc,
+                  ChequeStatus status
+    ) {
+        this.amount = amount;
+        this.number = number;
+        this.digit = digit;
+        this.payeeAccount = payeeAccount;
+        this.drawerAccount = drawerAccount;
+        this.createdDate = createdDate;
+        this.postingDate = postingDate;
+        this.onus = onus;
+        this.pdc = pdc;
+        this.status = status;
+    }
+    public void calculateOnus() {
+        if (payeeAccount != null & drawerAccount != null) {
+            this.onus =  payeeAccount.getBankCode().equals(drawerAccount.getBankCode());
+        }
+    }
+
+    public void calculatePdc() {
+        if (postingDate != null && createdDate != null) {
+            this.pdc = postingDate.isAfter(createdDate);
+        }
+    }
+
+    public void calculateStatus() {
+        if (this.pdc != null) {
+            this.status = (this.pdc) ? ChequeStatus.PDC_SUBMITTED : ChequeStatus.SUBMITTED;
+        }
+    }
 }

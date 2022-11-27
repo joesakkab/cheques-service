@@ -1,10 +1,8 @@
 package com.progressoft.api;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.progressoft.dtos.cheques.ChequeGetDto;
 import com.progressoft.dtos.cheques.ChequePostDto;
 import com.progressoft.dtos.cheques.ChequePutDto;
+import com.progressoft.dtos.cheques.ChequeSearchDto;
 import com.progressoft.service.ChequeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
@@ -13,9 +11,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.io.IOException;
-import java.nio.file.Paths;
-import java.util.List;
 
 @RestController
 @RequestMapping("/cheques")
@@ -34,6 +29,7 @@ public class ChequeController {
     public ResponseEntity<?> create(
             @RequestBody @Valid ChequePostDto chequePostDto
     ) {
+        System.out.println(chequePostDto);
             chequeService.createCheque(chequePostDto);
             return new ResponseEntity<>(HttpStatus.CREATED);
 
@@ -41,9 +37,11 @@ public class ChequeController {
 
     @GetMapping()
     public ResponseEntity<?> getAll(
-            @ModelAttribute("chequeDto") ChequeGetDto dto,
+//            @RequestBody @Valid ChequeSearchDto dto,
+            @ModelAttribute("chequeDto") ChequeSearchDto dto,
             Pageable pageable
     ) {
+        System.out.println(dto);
         return new ResponseEntity<>(
                 chequeService.findAllCheques(dto, pageable),
                 HttpStatus.OK
@@ -70,6 +68,17 @@ public class ChequeController {
         chequeService.deleteChequeByID(id);
         return new ResponseEntity<>(
                 "Cheque with id " + id + " successfully deleted.",
+                HttpStatus.OK
+        );
+    }
+
+    @GetMapping("/{id}/submit")
+    public ResponseEntity<?> submitById(
+            @PathVariable(value = "id") Long id
+    ) {
+        chequeService.submitById(id);
+        return new ResponseEntity<>(
+                "Cheque with id " + id + " successfully submitted.",
                 HttpStatus.OK
         );
     }
