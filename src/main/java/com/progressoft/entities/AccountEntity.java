@@ -6,9 +6,9 @@ import javax.persistence.Embeddable;
 
 @Data
 @NoArgsConstructor
-@AllArgsConstructor(staticName = "build")
+@AllArgsConstructor
 @Embeddable
-public class Account {
+public class AccountEntity {
     private String bankCode;
     private String branchCode;
     private String accountNumber;

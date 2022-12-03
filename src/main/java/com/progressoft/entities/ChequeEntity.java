@@ -1,5 +1,6 @@
 package com.progressoft.entities;
 
+import com.progressoft.domain.ChequeStatus;
 import lombok.*;
 
 import javax.persistence.*;
@@ -10,9 +11,10 @@ import java.time.LocalDate;
 @Getter
 @Setter
 @NoArgsConstructor
+//@AllArgsConstructor
 @Entity(name = "Cheque")
 @Table(name = "CHEQUE_TBL")
-public class Cheque {
+public class ChequeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -37,7 +39,7 @@ public class Cheque {
             @AttributeOverride(name = "accountNumber", column = @Column(name = "payee_account_number"))
     })
     @Embedded
-    private Account payeeAccount;
+    private AccountEntity payeeAccount;
 
 
     @AttributeOverrides({
@@ -46,7 +48,7 @@ public class Cheque {
             @AttributeOverride(name = "accountNumber", column = @Column(name = "drawer_account_number"))
     })
     @Embedded
-    private Account drawerAccount;
+    private AccountEntity drawerAccount;
 
     @Basic
     @Column(name = "created_date", updatable = false)
@@ -68,35 +70,49 @@ public class Cheque {
     @Column(name = "Status")
     private ChequeStatus status = ChequeStatus.DRAFT;
 
-    public Cheque(BigDecimal amount,
-                  String number,
-                  String digit,
-                  Account payeeAccount,
-                  Account drawerAccount,
-                  LocalDate createdDate,
-                  LocalDate postingDate,
-                  Boolean onus,
-                  Boolean pdc,
-                  ChequeStatus status
-    ) {
-        this.amount = amount;
-        this.number = number;
-        this.digit = digit;
-        this.payeeAccount = payeeAccount;
-        this.drawerAccount = drawerAccount;
-        this.createdDate = createdDate;
-        this.postingDate = postingDate;
-        this.onus = onus;
-        this.pdc = pdc;
-        this.status = status;
+//    public ChequeEntity(BigDecimal amount,
+//                        String number,
+//                        String digit,
+//                        AccountEntity payeeAccountEntity,
+//                        AccountEntity drawerAccountEntity,
+//                        LocalDate createdDate,
+//                        LocalDate postingDate,
+//                        Boolean onus,
+//                        Boolean pdc,
+//                        ChequeStatus status
+//    ) {
+//        this.amount = amount;
+//        this.number = number;
+//        this.digit = digit;
+//        this.payeeAccountEntity = payeeAccountEntity;
+//        this.drawerAccountEntity = drawerAccountEntity;
+//        this.createdDate = createdDate;
+//        this.postingDate = postingDate;
+//        this.onus = onus;
+//        this.pdc = pdc;
+//        this.status = status;
+//    }
+
+
+    public void setDefaults() {
+        this.createdDate = LocalDate.now();
+        this.status = ChequeStatus.DRAFT;
+        if (this.postingDate == null) { this.postingDate = LocalDate.now(); }
+        this.onus =  payeeAccount.getBankCode().equals(drawerAccount.getBankCode());
+        this.pdc = postingDate.isAfter(createdDate);
     }
-    public void calculateOnus() {
+
+    public void updateFields() {
+        calculateOnus();
+        calculatePdc();
+    }
+    private void calculateOnus() {
         if (payeeAccount != null & drawerAccount != null) {
             this.onus =  payeeAccount.getBankCode().equals(drawerAccount.getBankCode());
         }
     }
 
-    public void calculatePdc() {
+    private void calculatePdc() {
         if (postingDate != null && createdDate != null) {
             this.pdc = postingDate.isAfter(createdDate);
         }

@@ -1,7 +1,6 @@
 package com.progressoft.api;
 
-import com.progressoft.dtos.cheques.ChequePostDto;
-import com.progressoft.dtos.cheques.ChequePutDto;
+import com.progressoft.dtos.cheques.ChequeRequest;
 import com.progressoft.dtos.cheques.ChequeSearchDto;
 import com.progressoft.service.ChequeService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,11 +26,12 @@ public class ChequeController {
 
     @PostMapping()
     public ResponseEntity<?> create(
-            @RequestBody @Valid ChequePostDto chequePostDto
+            @RequestBody @Valid ChequeRequest req
     ) {
-        System.out.println(chequePostDto);
-            chequeService.createCheque(chequePostDto);
-            return new ResponseEntity<>(HttpStatus.CREATED);
+        return new ResponseEntity<>(
+                chequeService.createCheque(req)
+                ,HttpStatus.CREATED
+        );
 
     }
 
@@ -52,7 +52,7 @@ public class ChequeController {
     @PutMapping("/{id}")
     public ResponseEntity<?> updateById(
             @PathVariable(value = "id") Long id,
-            @RequestBody @Valid ChequePutDto dto
+            @RequestBody @Valid ChequeRequest dto
     ) {
             chequeService.updateChequeById(id, dto);
             return new ResponseEntity<>(
@@ -67,7 +67,7 @@ public class ChequeController {
     ) {
         chequeService.deleteChequeByID(id);
         return new ResponseEntity<>(
-                "Cheque with id " + id + " successfully deleted.",
+                "ChequeEntity with id " + id + " successfully deleted.",
                 HttpStatus.OK
         );
     }
@@ -78,7 +78,7 @@ public class ChequeController {
     ) {
         chequeService.submitById(id);
         return new ResponseEntity<>(
-                "Cheque with id " + id + " successfully submitted.",
+                "ChequeEntity with id " + id + " successfully submitted.",
                 HttpStatus.OK
         );
     }

@@ -2,7 +2,7 @@ package com.progressoft.dtos.cheques;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.progressoft.dtos.account.AccountDto;
-import com.progressoft.entities.ChequeStatus;
+import com.progressoft.domain.ChequeStatus;
 import lombok.*;
 
 import java.math.BigDecimal;
@@ -11,7 +11,7 @@ import java.time.LocalDate;
 @Data
 @AllArgsConstructor(staticName = "build")
 @NoArgsConstructor
-public class ChequeGetDto {
+public class ChequeResponse {
 
     @JsonProperty("id")
     private Long id;

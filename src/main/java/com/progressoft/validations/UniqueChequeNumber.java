@@ -9,7 +9,7 @@ import java.lang.annotation.*;
 @Target( {ElementType.METHOD, ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface UniqueChequeNumber {
-    String message() default "Cheque number must be unique";
+    String message() default "ChequeEntity number must be unique";
     Class<?>[] groups() default {};
     Class<? extends Payload>[] payload() default {};
 }

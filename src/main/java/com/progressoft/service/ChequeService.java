@@ -1,10 +1,10 @@
 package com.progressoft.service;
 
-import com.progressoft.dtos.cheques.ChequeGetDto;
-import com.progressoft.dtos.cheques.ChequePostDto;
-import com.progressoft.dtos.cheques.ChequePutDto;
+import com.progressoft.domain.Cheque;
+import com.progressoft.dtos.cheques.ChequeResponse;
+import com.progressoft.dtos.cheques.ChequeRequest;
 import com.progressoft.dtos.cheques.ChequeSearchDto;
-import com.progressoft.entities.Cheque;
+import com.progressoft.entities.ChequeEntity;
 import com.progressoft.mappers.ChequeMapper;
 import com.progressoft.repositories.ChequeRepository;
 import org.springframework.data.domain.*;
@@ -29,25 +29,28 @@ public class ChequeService {
         this.mapper = mapper;
     }
 
-    public void createCheque(ChequePostDto chequePostDto) {
-        System.out.println(chequePostDto);
-        Cheque entity = mapper.map(chequePostDto);
-        System.out.println(entity.toString());
-        chequeRepo.save(
-                mapper.map(chequePostDto)
-        );
+    public ChequeResponse createCheque(ChequeRequest req) {
+        Cheque obj = mapper.map(req);
+        System.out.println(obj);
+        obj.setDefaults();
+        System.out.println(obj);
+        ChequeEntity entity = mapper.toEntity(obj);
+        System.out.println(entity);
+        chequeRepo.save(entity);
+        return getChequeById(entity.getId());
     }
 
-    public ChequeGetDto getChequeById(Long id) {
-        return mapper.toChequeGetDto(
+    public ChequeResponse getChequeById(Long id) {
+        return mapper.map(
                 chequeRepo.getReferenceById(id)
         );
     }
 
-    public void updateChequeById(Long id, ChequePutDto dto) {
+    public void updateChequeById(Long id, ChequeRequest req) {
         if (chequeRepo.existsById(id)) {
-            Cheque entity = chequeRepo.getReferenceById(id);
-            mapper.updateChequeFromChequeDto(dto, entity);
+            ChequeEntity entity = chequeRepo.getReferenceById(id);
+            mapper.updateChequeFromChequeDto(req, entity);
+            entity.updateFields();
             chequeRepo.save(entity);
         }
     }
@@ -56,13 +59,13 @@ public class ChequeService {
         if (chequeRepo.existsById(id)) {
             chequeRepo.deleteById(id);
         } else {
-            throw new EntityNotFoundException("Cheque with id " + id + " not found.");
+            throw new EntityNotFoundException("ChequeEntity with id " + id + " not found.");
         }
     }
 
-    public Slice<ChequeGetDto> findAllCheques( ChequeSearchDto dto, Pageable pageable) {
+    public Slice<ChequeResponse> findAllCheques(ChequeSearchDto dto, Pageable pageable) {
         System.out.println("The cheque received was : \n" + dto.toString());
-        Example<Cheque> chequeExample = Example.of(
+        Example<ChequeEntity> chequeExample = Example.of(
                 mapper.map(dto)
         );
         System.out.println("Example cheques is calculated.");
@@ -71,12 +74,14 @@ public class ChequeService {
         return chequeRepo.findAll(
                 chequeExample,
                 pageable
-            ).map(mapper::toChequeGetDto);
+            ).map(mapper::map);
     }
 
     public void submitById(Long id) {
-        Cheque entity = chequeRepo.getReferenceById(id);
-        entity.calculateStatus();
+        ChequeEntity entity = chequeRepo.getReferenceById(id);
+        Cheque obj = mapper.toCheque(entity);
+        obj.calculateStatus();
+        mapper.submit(entity, obj);
         chequeRepo.save(entity);
     }
 }

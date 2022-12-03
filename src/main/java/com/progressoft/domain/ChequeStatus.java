@@ -1,4 +1,4 @@
-package com.progressoft.entities;
+package com.progressoft.domain;
 
 public enum ChequeStatus {
     DRAFT,
